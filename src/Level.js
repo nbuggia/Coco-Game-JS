@@ -1,3 +1,5 @@
+"use strict";
+
 export class Level {
   constructor() {
     this.setup();
