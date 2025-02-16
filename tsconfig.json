@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es2020", // Target JavaScript version (ES5 is widely compatible)
+    "module": "esnext", // Module system (CommonJS is typical for Node.js)
+    "outDir": "./dist", // Output directory for compiled JavaScript files
+    "strict": true // Enable strict type checking (recommended)
+  },
+  "include": [
+    "./src/**/*.ts" // Include all TypeScript files in the 'src' directory (or wherever your code is)
+  ]
+}
