@@ -1,5 +1,5 @@
 # Coco-Game-TS
 
-Simple Typescript Game Framework
+Simple Javascript Game Framework using Typescript
 
 ## Reference
