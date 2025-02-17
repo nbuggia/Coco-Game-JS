@@ -34,6 +34,7 @@ export class CocoGame {
   }
   update(deltaTime) {
     // scene manager update  // update logic
+    this.sceneManager.update(deltaTime);
   }
   render() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
