@@ -1,5 +1,9 @@
 # Coco-Game-TS
 
-Simple Javascript Game Framework using Typescript
+Simple ASCII Game Framework using Typescript
+
+## Resources
+
+- https://www.gridsagegames.com/rexpaint/
 
 ## Reference

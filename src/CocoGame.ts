@@ -1,60 +1,52 @@
 "use strict";
 
-import { SceneManager } from "./SceneManager.js";
+interface GameOptions {
+  width: number;
+  height: number;
+}
 
-export class CocoGame {
-  canvas: HTMLCanvasElement;
-  context: CanvasRenderingContext2D;
-  sceneManager: SceneManager;
-  lastTime: number;
-  running: boolean;
+class AsciiGame {
+  private width: number;
+  private height: number;
+  private screen: string[][];
 
-  constructor(canvasId: string) {
-    const c = document.getElementById(canvasId) as HTMLCanvasElement | null;
-    if (!c) {
-      throw new Error(`Canvas with id ${canvasId} not found`);
+  constructor(options: GameOptions) {
+    this.width = options.width;
+    this.height = options.height;
+    this.screen = [];
+    this.clearScreen();
+  }
+
+  private clearScreen(): void {
+    this.screen = Array(this.height)
+      .fill(null)
+      .map(() => Array(this.width).fill(" "));
+  }
+
+  public setPixel(x: number, y: number, char: string): void {
+    if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+      this.screen[y][x] = char;
     }
-    this.canvas = c;
+  }
 
-    const ctx = this.canvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("Could not get 2d rendering context");
+  public draw(): void {
+    let output = "";
+    for (const row of this.screen) {
+      output += row.join("") + "\n";
     }
-    this.context = ctx;
-
-    // scene manager
-    this.sceneManager = new SceneManager();
-    this.lastTime = Date.now();
-    this.running = false;
+    console.clear(); // Clear the console for a smoother animation
+    console.log(output);
   }
 
-  start(): void {
-    this.running = true;
-    this.loop(0);
+  public getWidth(): number {
+    return this.width;
   }
 
-  stop(): void {
-    this.running = false;
+  public getHeight(): number {
+    return this.height;
   }
 
-  loop(currentTime: number): void {
-    if (!this.running) return;
-
-    const deltaTime = (currentTime - this.lastTime) / 1000;
-    this.lastTime = currentTime;
-
-    this.update(deltaTime);
-    this.render();
-
-    requestAnimationFrame(this.loop.bind(this));
-  }
-
-  update(deltaTime: number): void {
-    // scene manager update  // update logic
-  }
-
-  render(): void {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    // scene manager render
+  public clear(): void {
+    this.clearScreen();
   }
 }

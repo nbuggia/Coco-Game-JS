@@ -1,43 +1,36 @@
 "use strict";
-import { SceneManager } from "./SceneManager.js";
-export class CocoGame {
-  constructor(canvasId) {
-    const c = document.getElementById(canvasId);
-    if (!c) {
-      throw new Error(`Canvas with id ${canvasId} not found`);
+class AsciiGame {
+    constructor(options) {
+        this.width = options.width;
+        this.height = options.height;
+        this.screen = [];
+        this.clearScreen();
     }
-    this.canvas = c;
-    const ctx = this.canvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("Could not get 2d rendering context");
+    clearScreen() {
+        this.screen = Array(this.height)
+            .fill(null)
+            .map(() => Array(this.width).fill(" "));
     }
-    this.context = ctx;
-    // scene manager
-    this.sceneManager = new SceneManager();
-    this.lastTime = Date.now();
-    this.running = false;
-  }
-  start() {
-    this.running = true;
-    this.loop(0);
-  }
-  stop() {
-    this.running = false;
-  }
-  loop(currentTime) {
-    if (!this.running) return;
-    const deltaTime = (currentTime - this.lastTime) / 1000;
-    this.lastTime = currentTime;
-    this.update(deltaTime);
-    this.render();
-    requestAnimationFrame(this.loop.bind(this));
-  }
-  update(deltaTime) {
-    // scene manager update  // update logic
-    this.sceneManager.update(deltaTime);
-  }
-  render() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    // scene manager render
-  }
+    setPixel(x, y, char) {
+        if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+            this.screen[y][x] = char;
+        }
+    }
+    draw() {
+        let output = "";
+        for (const row of this.screen) {
+            output += row.join("") + "\n";
+        }
+        console.clear(); // Clear the console for a smoother animation
+        console.log(output);
+    }
+    getWidth() {
+        return this.width;
+    }
+    getHeight() {
+        return this.height;
+    }
+    clear() {
+        this.clearScreen();
+    }
 }
