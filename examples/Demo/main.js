@@ -3,31 +3,38 @@
 import { CocoGame } from "./../../dist/CocoGame.js";
 
 function main() {
-  const game = new CocoGame({ width: 20, height: 10 });
-
-  let playerX = 5;
-  let playerY = 5;
+  const game = new CocoGame({ width: 200, height: 50, gameDivId: "game-demo", fontFamily: "monospace" });
 
   function update() {
     game.clear();
-    game.setPixel(playerX, playerY, "P");
+    game.resizeGameDiv();
     game.draw();
   }
 
-  function handleInput(event) {
-    if (event.key === "ArrowLeft") {
-      playerX = Math.max(0, playerX - 1);
-    } else if (event.key === "ArrowRight") {
-      playerX = Math.min(game.getWidth() - 1, playerX + 1);
-    } else if (event.key === "ArrowUp") {
-      playerY = Math.max(0, playerY - 1);
-    } else if (event.key === "ArrowDown") {
-      playerY = Math.min(game.getHeight() - 1, playerY + 1);
+  function handleMouseClick(event) {
+    if (game.isClickInGameDiv(event)) {
+      console.log("Yes");
+    } else {
+      console.log("No");
     }
+    const rect = event.target.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    console.log("Mouse click at", x, y);
+
+    const sprite = {
+      x: x / 10,
+      y: y / 10,
+      dx: Math.random() * 2 - 1,
+      dy: Math.random() * 2 - 1,
+      char: "*",
+    };
+    game.addSprite(sprite);
   }
 
   setInterval(update, 100);
-  document.addEventListener("keydown", handleInput);
+  document.addEventListener("click", handleMouseClick);
 }
 
 main();
