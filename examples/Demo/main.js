@@ -3,7 +3,7 @@
 import { CocoGame } from "./../../dist/CocoGame.js";
 
 function main() {
-  const game = new AsciiGame({ width: 20, height: 10 });
+  const game = new CocoGame({ width: 20, height: 10 });
 
   let playerX = 5;
   let playerY = 5;

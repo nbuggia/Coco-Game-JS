@@ -1,5 +1,5 @@
 "use strict";
-class AsciiGame {
+export class CocoGame {
     constructor(options) {
         this.width = options.width;
         this.height = options.height;

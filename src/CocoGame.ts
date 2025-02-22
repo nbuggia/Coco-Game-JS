@@ -5,7 +5,7 @@ interface GameOptions {
   height: number;
 }
 
-class AsciiGame {
+export class CocoGame {
   private width: number;
   private height: number;
   private screen: string[][];
