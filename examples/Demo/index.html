@@ -7,14 +7,20 @@
     <script src="./main.js" type="module"></script>
     <style>
       body {
-      background-color: black;
-      color: white;
-      font-family: monospace;
-      border: 0;
+          background-color: black;
+          color: white;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
       }
+      canvas {
+          image-rendering: pixelated;
+      }  
     </style>
   </head>
   <body>
-    <center><pre id="game-demo"></pre></center>
+    <center><canvas id="game-demo-canvas"></canvas></center>
   </body>
 </html>

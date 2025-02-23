@@ -3,8 +3,9 @@
 interface GameOptions {
   width: number;
   height: number;
-  gameDivId: string;
+  gameCanvasId: string;
   fontFamily: string;
+  fontSize: number;
 }
 
 interface Sprite {
@@ -19,35 +20,33 @@ export class CocoGame {
   private width: number;
   private height: number;
   private screen: string[][];
-  private sprites: Sprite[] = [];
-  private gameDiv: HTMLElement;
-  private fontCanvas: HTMLCanvasElement; // for measuring text width
-  private fontContext: CanvasRenderingContext2D; // for measuring text width
+  private sprites: Sprite[];
+  private gameCanvas: HTMLCanvasElement;
+  private gameContext: CanvasRenderingContext2D;
   private fontFamily: string;
+  private fontSize: number;
+  private charWidth: number;
+  private charHeight: number;
 
   constructor(options: GameOptions) {
     this.width = options.width;
     this.height = options.height;
     this.fontFamily = options.fontFamily || "monospace";
+    this.fontSize = options.fontSize;
     this.screen = [];
     this.sprites = [];
 
-    // configure gameDiv
-    const gameDiv = document.getElementById(options.gameDivId);
-    if (!gameDiv) {
-      throw new Error(`Game div with id ${options.gameDivId} not found.`);
+    // configure gameCanvas
+    this.gameCanvas = document.getElementById(options.gameCanvasId) as HTMLCanvasElement;
+    if (!this.gameCanvas) {
+      throw new Error(`Canvas with id '${options.gameCanvasId}' not found.`);
     }
-    this.gameDiv = gameDiv;
-    this.gameDiv.style.fontFamily = this.fontFamily;
+    this.gameContext = this.gameCanvas.getContext("2d")!;
 
-    // create reusable canvas and context for measuring text width on resize
-    const canvas = document.createElement("canvas");
-    this.fontCanvas = canvas;
-    const context = canvas.getContext("2d");
-    if (!context) {
-      throw new Error("Could not get 2d context.");
-    }
-    this.fontContext = context;
+    // measure the width and height of a character
+    this.gameContext.font = `${this.fontSize}px ${this.fontFamily}`;
+    this.charWidth = this.gameContext.measureText("W").width;
+    this.charHeight = this.fontSize;
 
     this.clearScreen();
   }
@@ -55,52 +54,7 @@ export class CocoGame {
   private clearScreen(): void {
     this.screen = Array(this.height)
       .fill(null)
-      .map(() => Array(this.width).fill("W"));
-  }
-
-  public resizeGameDiv() {
-    const charWidth = this.getCharWidth();
-    const charHeight = this.getCharHeight();
-    const gameWidth = this.width * charWidth;
-    const gameHeight = this.height * charHeight;
-
-    const windowWidth = window.innerWidth;
-    const windowHeight = window.innerHeight;
-
-    let scale = Math.min(windowWidth / gameWidth, windowHeight / gameHeight);
-
-    this.gameDiv.style.width = `${gameWidth}px`;
-    this.gameDiv.style.height = `${gameHeight}px`;
-    this.gameDiv.style.transform = `scale(${scale})`;
-    this.gameDiv.style.transformOrigin = "top left";
-  }
-
-  private getCharWidth(): number {
-    // re-use canvas object for better performance
-    this.fontContext.font = this.fontFamily;
-    const metrics = this.fontContext.measureText("W");
-    return metrics.width;
-  }
-
-  private getCharHeight(): number {
-    const test = document.createElement("div");
-    test.style.fontFamily = "monospace";
-    test.style.fontSize = "1em";
-    test.textContent = "W";
-    document.body.appendChild(test);
-    const height = test.offsetHeight;
-    document.body.removeChild(test);
-    return height;
-  }
-
-  public isClickInGameDiv(event: MouseEvent): boolean {
-    const rect = this.gameDiv.getBoundingClientRect();
-    return (
-      event.clientX >= rect.left &&
-      event.clientX <= rect.right &&
-      event.clientY >= rect.top &&
-      event.clientY <= rect.bottom
-    );
+      .map(() => Array(this.width).fill("."));
   }
 
   public setPixel(x: number, y: number, char: string): void {
@@ -110,11 +64,13 @@ export class CocoGame {
   }
 
   public draw(): void {
-    let output = "";
-    for (const row of this.screen) {
-      output += row.join("") + "\n";
+    this.gameContext.clearRect(0, 0, this.gameCanvas.width, this.gameCanvas.height);
+    this.gameContext.font = `${this.fontSize}px ${this.fontFamily}`;
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        this.gameContext.fillText(this.screen[y][x], x * this.charWidth, (y + 1) * this.charHeight);
+      }
     }
-    this.gameDiv.textContent = output;
   }
 
   public getWidth(): number {
@@ -153,4 +109,30 @@ export class CocoGame {
       this.setPixel(Math.round(sprite.x), Math.round(sprite.y), sprite.char);
     }
   }
+
+  public resizeGameDiv() {
+    const gameWidth = this.width * this.charWidth;
+    const gameHeight = this.height * this.charHeight;
+
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
+    let scale = Math.min(windowWidth / gameWidth, windowHeight / gameHeight);
+
+    this.gameCanvas.style.width = `${gameWidth}px`;
+    this.gameCanvas.style.height = `${gameHeight}px`;
+    this.gameCanvas.style.transform = `scale(${scale})`;
+    this.gameCanvas.style.transformOrigin = "top left";
+  }
+  /*
+  public isClickInGameDiv(event: MouseEvent): boolean {
+    const rect = this.gameDiv.getBoundingClientRect();
+    return (
+      event.clientX >= rect.left &&
+      event.clientX <= rect.right &&
+      event.clientY >= rect.top &&
+      event.clientY <= rect.bottom
+    );
+  }
+  */
 }
