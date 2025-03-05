@@ -6,12 +6,12 @@ function main() {
   const game = new CocoGame({
     width: 200,
     height: 50,
-    gameDivId: "game-demo-canvas",
+    gameCanvasId: "game-demo-canvas",
     fontFamily: "monospace",
     fontSize: 16,
   });
 
-  const canvas = document.getElementById("game-canvas");
+  const canvas = document.getElementById("game-demo-canvas");
 
   function update() {
     game.clear();
